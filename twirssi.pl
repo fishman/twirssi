@@ -480,6 +480,15 @@ sub cmd_login {
     }
     $defservice = $service = ucfirst lc $service;
 
+    my $apihost;
+    my $apiurl;
+
+    unless ( $apihost = Irssi::settings_get_str("twitter_apihost")
+        and $apiurl = Irssi::settings_get_str("twitter_apiurl") ) {
+      $apihost = "twitter.com:443";
+      $apiurl = "https://twitter.com/";
+    }
+
     eval "use Net::$service";
     if ($@) {
         &notice(
@@ -488,6 +497,8 @@ sub cmd_login {
     }
 
     $twit = "Net::$service"->new(
+        apihost  => $apihost,
+        apiurl   => $apiurl,
         username => $user,
         password => $pass,
         source   => "twirssi"
@@ -1454,6 +1465,8 @@ Irssi::settings_add_str( "twirssi", "twirssi_location",
     ".irssi/scripts/twirssi.pl" );
 Irssi::settings_add_str( "twirssi", "twirssi_replies_store",
     ".irssi/scripts/twirssi.json" );
+Irssi::settings_add_str( "twirssi", "twitter_apiurl",          undef );
+Irssi::settings_add_str( "twirssi", "twitter_apihost",         undef );
 Irssi::settings_add_bool( "twirssi", "twirssi_upgrade_beta",      0 );
 Irssi::settings_add_bool( "twirssi", "tweet_to_away",             0 );
 Irssi::settings_add_bool( "twirssi", "show_reply_context",        0 );
